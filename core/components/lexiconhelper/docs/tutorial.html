@@ -16,9 +16,9 @@ Go to System | Package Management on the main menu in the MODx Manager and click
 
 <p>A lexicon key in the code might look like this:</p>
 <pre><fixedpre>
-    &lt;?php
+    <?php
     if (! file_exists('myfile') {
-        return $modx-&gt;lexicon('mc.file_not_found');
+        return $modx->lexicon('mc.file_not_found');
     }
 </fixedpre></pre>
 
@@ -35,7 +35,7 @@ Go to System | Package Management on the main menu in the MODx Manager and click
 
 <h3>Location of Lexicon Files</h3>
 
-<p>Lexicon files must always be located in the core/components/<i>mycomponent</i>/lexicon directory in a subdirectory named with the two-letter language code identifying the language used in the files in that subdirectory.</p>
+<p>Lexicon files must always be located in the core/components/<i>mycomponent</i>/lexicon/ directory in a subdirectory named with the two-letter language code identifying the language used in the files in that subdirectory.</p>
 
 <p>Many add-on components have only one or two language files. The default.inc.php file contains any strings used by the component itself. The properties.inc.php file (if any) contains descriptions used for the component's default properties or any property sets. Here are the locations for the English and French language versions of those files </p>
 
@@ -59,7 +59,7 @@ MODX root directory
 <p>LexiconHelper assumes that you have already put lexicon strings in your code. The lexicon() calls in the code <b>must</b> be in this form:</p>
 
 <pre><fixedpre>
-    $modx-&gt;lexicon('prefix.language_string_key');
+    $modx->lexicon('prefix.language_string_key');
 </fixedpre></pre>
 
 <p>The prefix is optional, but you must use single quotes and no spaces.</p>
@@ -69,9 +69,9 @@ MODX root directory
     [[!LexiconHelper?
         &code_path=`path/to/code/directory`
         &code_file=`name of code file`
-        $language_path=`path/to/language/directory`
-        $language_file=`name of language file`
-        $language=`en`
+        &language_path=`path/to/language/directory`
+        &language_file=`name of language file`
+        &language=`en`
     ]]
 </fixedpre></pre>
 
