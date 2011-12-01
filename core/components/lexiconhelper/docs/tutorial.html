@@ -1,0 +1,148 @@
+<p>This snippet is for use with MODx Revolution. LexiconHelper is a utility to help MODX add-on developers create and check lexicon files for their components. Note that this is <i>not</i> a tool for translators.</p>
+
+<p>Once you have put lexicon strings in your code, LexiconHelper finds them and creates output that can be pasted into a lexicon file, so all you need to do is type in the strings you want to appear.</p>
+
+<p>LexiconHelper will also check your code against an existing language file and report on missing or misspelled keys, empty strings, and strings in the language file that are not used in the code.</p>
+
+<p>For more information about using lexicon strings to internationalize your component go <a href="http://rtfm.modx.com/display/revolution20/Internationalization">here</a>.</p>
+        
+<h3>Installing LexiconHelper for MODx Revolution</h3>
+<p>
+Go to System | Package Management on the main menu in the MODx Manager and click on the "Download Extras" button. That will take you to the Revolution Repository (AKA Web Transport Facility). Put LexiconHelper in the search box and press Enter. Click on the "Download" button, and when it changes to "Downloaded," click on the "Finish" button. That should bring you back to your Package Management grid. Right click on LexiconHelper and select "Install Package." The LexiconHelper snippet should now be installed.</p>
+
+<h3>Internationalization</h3>
+
+<p>In order to &quot;internationalize&quot; your add-on component, you need to replace any messages to the user with calls to the MODX lexicon method using a key to represent the string you want. MODX will look in the lexicon file for the currently specified language and replace your key with the string it finds there.</p>
+
+<p>A lexicon key in the code might look like this:</p>
+<pre><fixedpre>
+    &lt;?php
+    if (! file_exists('myfile') {
+        return $modx-&gt;lexicon('mc.file_not_found');
+    }
+</fixedpre></pre>
+
+<p>The corresponding line in the lexicon file, might look like this:</p>
+<pre><fixedpre>
+    $_lang['mc.file_not_found'] = 'Sorry, unable to find that file';
+</fixedpre></pre>
+
+<p>The prefix on the language key (&quot;mc.&quot; in the example above) is optional, but recommended. It helps keep your keys from colliding with others that might be used on the same page. The two-letter code is derived from the name of your component. To be extra safe, you could use the full name of your component as a prefix.</p>
+
+<p>When the call to $modx-&gt;lexicon() is made, MODX will look through the currently loaded lexicon strings for the key you used. If it finds the key, it will replace the $modx-&gt;lexicon() call with the corresponding value. </p>
+
+<p>In order for any lexicon strings to be loaded, you need to call $modx-&gt;load() before any calls to $modx-&gt;lexicon() are made. Go <a href="http://rtfm.modx.com/display/revolution20/Internationalization">here</a> for more information on loading the lexicon.</p>
+
+<h3>Location of Lexicon Files</h3>
+
+<p>Lexicon files must always be located in the core/components/<i>mycomponent</i>/lexicon directory in a subdirectory named with the two-letter language code identifying the language used in the files in that subdirectory.</p>
+
+<p>Many add-on components have only one or two language files. The default.inc.php file contains any strings used by the component itself. The properties.inc.php file (if any) contains descriptions used for the component's default properties or any property sets. Here are the locations for the English and French language versions of those files </p>
+
+<pre><fixedpre>
+MODX root directory
+    core
+        components
+            mycomponent
+                lexicon
+                    en
+                        default.inc.php
+                        properties.inc.php
+                    fr
+                        default.inc.php
+                        properties.inc.php
+</fixedpre></pre>
+
+<p>If your Transport Package has been created properly, it will set a namespace path for your component. MODX will automatically know where to look for those files when you call $modx-&gt;lexicon-&gt;load('default') in your snippet or when a user clicks on a property description in the Manager.</p>
+
+<h3>Using LexiconHelper</h3>
+<p>LexiconHelper assumes that you have already put lexicon strings in your code. The lexicon() calls in the code <b>must</b> be in this form:</p>
+
+<pre><fixedpre>
+    $modx-&gt;lexicon('prefix.language_string_key');
+</fixedpre></pre>
+
+<p>The prefix is optional, but you must use single quotes and no spaces.</p>
+<p>To execute LexiconHelper, just create a new resource to display the output and put a snippet tag for it in the Resource content field:</p>
+
+<pre><fixedpre>
+    [[!LexiconHelper?
+        &code_path=`path/to/code/directory`
+        &code_file=`name of code file`
+        $language_path=`path/to/language/directory`
+        $language_file=`name of language file`
+        $language=`en`
+    ]]
+</fixedpre></pre>
+
+<p>The &amp;language property defaults to `en` and the &amp;language_file property defaults to default.inc.php`. These two strings will be translated if used in the path properties:</p>
+<pre><fixedpre>
+    {core_path}
+    {assets_path}
+</fixedpre></pre>
+<p>The strings above will be replaced with the appropriate paths for your installation. They'll have a trailing slash, so be sure not to add an extra one in your property. Also, do <b>not</b> include the language directory name in the &amp;language_path property. It will be added automatically.</p>
+
+<p>Here is an example:</p>
+
+<pre><fixedpre>
+    [[!LexiconHelper?
+        &code_path=`{core_path}components/mycomponent/elements/snippets/`
+        &code_file=`mycomponent.snippet.php`
+        $language_path=`{core_path}components/mycomponent/lexicon/`
+        $language_file=`default.inc.php`
+        $language=`en`
+    ]]
+</fixedpre></pre>
+
+<p>Note that the language file must exist, though it can be empty. You can also list several files (separated by commas &mdash; no spaces) in the &amp;code_file property if several code files share the same language file, but LexiconHelper can only check one language file at a time. If the code files are in different directories (e.g., a snippet and a plugin), you can cheat by shortening the &amp;code_path property and adding the end of the path to the beginning of each file in the &amp;code_file property. </p>
+
+<p>When you preview the resource, LexiconHelper will display the information about the language strings used in the code file(s). If there are missing strings in the language file, LexiconHelper will display them in a format that can be pasted into the language file for completion. </p>
+
+<h3>LexiconHelper Properties</h3>
+
+
+<table class="properties">
+    <tbody>
+    <tr>
+        <th>Property</th>
+        <th>Description</th>
+        <th>Default</th>
+    </tr>
+
+    <tr>
+        <td>code_path</td>
+        <td>(required) Path to directory of the code file(s)</td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>code_file</td>
+        <td>(required) Name of the code file(s). Can be a comma-separated list</td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>language_path</td>
+        <td>(required) Path to directory of the language file</td>
+        <td></td>
+    </tr>
+
+    <tr>
+        <td>language_file</td>
+        <td>(optional) Name of the language file</td>
+        <td>default.inc.php</td>
+    </tr>
+
+    <tr>
+        <td>language</td>
+        <td>(optional) Two-letter code for the language (name of language directory)</td>
+        <td>en</td>
+    </tr>
+
+
+    </tbody>
+</table>
+<p>&nbsp;</p>
+
+
+        
