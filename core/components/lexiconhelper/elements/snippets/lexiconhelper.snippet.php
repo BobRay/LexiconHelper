@@ -89,7 +89,7 @@ $props =& $scriptProperties;
 /* language to use for error messages and reports */
 $snippetLanguage = $modx->getOption('manager_language',$props,null);
 $snippetLanguage = !empty ($snippetLanguage) ? $snippetLanguage . ':' : 'en:';
-$modx->lexicon->load($snippetLanguage . 'newspublisher:default');
+$modx->lexicon->load($snippetLanguage . 'lexiconhelper:default');
 
 $orphans = array();
 $empty = array();
