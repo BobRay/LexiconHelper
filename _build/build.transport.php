@@ -60,12 +60,12 @@ $sources= array (
     'build' => $root . '_build/',
     /* note that the next two must not have a trailing slash */
     'source_core' => $root.'core/components/'.PKG_NAME_LOWER,
-    'source_assets' => $root.'assets/components/'.PKG_NAME_LOWER,
-    'resolvers' => $root . '_build/resolvers/',
-    'validators'=> $root . '_build/validators/',
+    //'source_assets' => $root.'assets/components/'.PKG_NAME_LOWER,
+    //'resolvers' => $root . '_build/resolvers/',
+    //'validators'=> $root . '_build/validators/',
     'data' => $root . '_build/data/',
     'docs' => $root . 'core/components/' . PKG_NAME_LOWER . '/docs/',
-    'install_options' => $root . '_build/install.options/',
+    //'install_options' => $root . '_build/install.options/',
     'packages'=> $root . 'core/packages',
 );
 unset($root);

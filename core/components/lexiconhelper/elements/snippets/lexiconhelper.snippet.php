@@ -94,6 +94,8 @@ $modx->lexicon->load($snippetLanguage . 'newspublisher:default');
 $orphans = array();
 $empty = array();
 $matches = array();
+$code = '';
+$output = '';
 
 
 /* Set log stuff */
@@ -108,7 +110,7 @@ $code_file = $modx->getOption('code_file', $props, null);
 
 $codeFiles = explode(',', $code_file);
 
-$code = '';
+/* collect text in code file(s) */
 foreach($codeFiles as $file) {
     /* full path to code file - set manually to run outside of MODX */
     $codeFile = $path . $file;
@@ -167,7 +169,7 @@ if (isset($_lang)) {
         }
     }
 }
-$output = '';
+
 
 if (!empty($codeStrings) && !empty($_lang) && empty($untranslated) && empty($empty)) {
     /* no untranslated code strings */
