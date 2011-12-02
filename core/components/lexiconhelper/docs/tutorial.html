@@ -53,7 +53,7 @@ MODX root directory
                         properties.inc.php
 </fixedpre></pre>
 
-<p>If your Transport Package has been created properly, it will set a namespace path for your component. MODX will automatically know where to look for those files when you call $modx-&gt;lexicon-&gt;load('default') in your snippet or when a user clicks on a property description in the Manager.</p>
+<p>If your Transport Package has been created properly, it will set a namespace path for your component. MODX will automatically know where to look for those files when you call $modx-&gt;lexicon-&gt;load('default') in your snippet. If the 'lexicon' field of each property has been set (e.g., 'mycomponent:properties'), MODX will know where to look when a user clicks on a property description in the Manager.</p>
 
 <h3>Using LexiconHelper</h3>
 <p>LexiconHelper assumes that you have already put lexicon strings in your code. The lexicon() calls in the code <b>must</b> be in this form:</p>
@@ -63,6 +63,22 @@ MODX root directory
 </fixedpre></pre>
 
 <p>The prefix is optional, but you must use single quotes and no spaces.</p>
+
+<p>In an array of properties in a Transport Package build file, each property is represented by an array of fields. This example property has an internationalized property description with language strings in the file properties.inc.php:</p>
+
+<pre><fixedpre>
+    array(
+        'name' => 'MyProperty',
+        'desc' => 'mc.some_lexicon_key',
+        'type' => 'integer',
+        'options' => '',
+        'lexicon' => 'mycomponent:properties',
+        'value' => '12',
+    },
+</fixedpre></pre>
+
+<p>In the example above, the 'desc' field holds the language key and the 'lexicon' field tells MODX where the lexicon file is. When a user clicks on the property description, he or she will see the language string from the appropriate properties.inc.php file based on the current manager_language setting. The array fields can be in any order, but the order above is common.</p>
+
 <p>To execute LexiconHelper, just create a new resource to display the output and put a snippet tag for it in the Resource content field:</p>
 
 <pre><fixedpre>
@@ -88,15 +104,18 @@ MODX root directory
     [[!LexiconHelper?
         &code_path=`{core_path}components/mycomponent/elements/snippets/`
         &code_file=`mycomponent.snippet.php`
-        $language_path=`{core_path}components/mycomponent/lexicon/`
-        $language_file=`default.inc.php`
-        $language=`en`
+        &language_path=`{core_path}components/mycomponent/lexicon/`
+        &language_file=`default.inc.php`
+        &language=`en`
+        &has_properties=`0`
     ]]
 </fixedpre></pre>
 
-<p>Note that the language file must exist, though it can be empty. You can also list several files (separated by commas &mdash; no spaces) in the &amp;code_file property if several code files share the same language file, but LexiconHelper can only check one language file at a time. If the code files are in different directories (e.g., a snippet and a plugin), you can cheat by shortening the &amp;code_path property and adding the end of the path to the beginning of each file in the &amp;code_file property. </p>
+<p>Note that the language file must exist, though it can be empty. You can also list several files (separated by commas &mdash; no spaces) in the &amp;code_file property if several code files share the same language file, but LexiconHelper can only check one language file at a time. If the code files are in different directories (e.g., a snippet and a plugin that share a language file), you can cheat by shortening the &amp;code_path property and adding the end of the path to the beginning of each file in the &amp;code_file property. </p>
 
-<p>When you preview the resource, LexiconHelper will display the information about the language strings used in the code file(s). If there are missing strings in the language file, LexiconHelper will display them in a format that can be pasted into the language file for completion. </p>
+<p>If the &amp;has_properties property is set to `1` or if a code_file has the word 'properties' in its name, LexiconHelper will also look for internationalized property descriptions in the code.</p>
+
+<p>When you preview the resource, LexiconHelper will display the information about the language strings used in the code file(s). The parsing is fairly slow, especially if the code file is large, so be patient. If there are missing strings in the language file, LexiconHelper will display them in a format that can be pasted into the language file for completion. </p>
 
 <h3>LexiconHelper Properties</h3>
 
@@ -137,6 +156,11 @@ MODX root directory
         <td>language</td>
         <td>(optional) Two-letter code for the language (name of language directory)</td>
         <td>en</td>
+    </tr>
+    <tr>
+        <td>has_properties</td>
+        <td>(optional) If this is set to 1 or the code file name contains the word 'properties', LexiconHelper will also look for property descriptions</td>
+        <td></td>
     </tr>
 
 

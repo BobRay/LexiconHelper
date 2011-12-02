@@ -107,7 +107,8 @@ $path = str_replace('{core_path}', MODX_CORE_PATH, $path);
 $path = str_replace('{assets_path}', MODX_ASSETS_PATH, $path);
 
 $code_file = $modx->getOption('code_file', $props, null);
-
+$has_properties = $modx->getOption('has_properties',$props,null) || strstr($code_file,'properties');
+    
 $codeFiles = explode(',', $code_file);
 
 /* collect text in code file(s) */
@@ -143,9 +144,13 @@ if (! file_exists($languageFile)) {
 
 /* find the code strings */
 preg_match_all("/lexicon\(\'([^\\']+)\'\)/", $code, $matches);
-
 $codeStrings = array_values($matches[1]);
 
+/* look for descriptions in property files */
+if ($has_properties) {
+    preg_match_all("/\s*\'desc\'\s*\=\>\s*\'(.*)\'/", $code, $matches);
+    $codeStrings = array_merge($codeStrings, $matches[1]);
+}
 /* see if codestrings are in language file */
 if (!empty($codeStrings)) {
     foreach($codeStrings as $key => $codeString) {
