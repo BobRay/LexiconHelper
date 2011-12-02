@@ -53,7 +53,15 @@ MODX root directory
                         properties.inc.php
 </fixedpre></pre>
 
-<p>If your Transport Package has been created properly, it will set a namespace path for your component. MODX will automatically know where to look for those files when you call $modx-&gt;lexicon-&gt;load('default') in your snippet. If the 'lexicon' field of each property has been set (e.g., 'mycomponent:properties'), MODX will know where to look when a user clicks on a property description in the Manager.</p>
+<p>If your Transport Package has been created properly, it will set a namespace path for your component. MODX will automatically know where to look to load the default.inc.php file when you call $modx-&gt;lexicon-&gt;load('default') in your snippet. If the namespace has not been set, you can use this form: $modx-&gt;lexicon-&gt;load('mycomponent:default'). If the current manager_language is 'en', MODX will then load the lexicon strings from this file:</p>
+<pre><fixedpre>
+    core/components/mycomponent/lexicon/en/default.inc.php.
+</fixedpre></pre>
+
+<p>If you want to specify the language explicitly, you can use this form: $modx-&gt;lexicon-&gt;load('en:mycomponent:default'). </p>
+
+
+<p>If the 'lexicon' field of each property has been set (e.g., 'mycomponent:properties'), MODX will know where to look when a user clicks on a property description in the Manager.</p>
 
 <h3>Using LexiconHelper</h3>
 <p>LexiconHelper assumes that you have already put lexicon strings in your code. The lexicon() calls in the code <b>must</b> be in this form:</p>
@@ -79,7 +87,7 @@ MODX root directory
 
 <p>In the example above, the 'desc' field holds the language key and the 'lexicon' field tells MODX where the lexicon file is. When a user clicks on the property description, he or she will see the language string from the appropriate properties.inc.php file based on the current manager_language setting. The array fields can be in any order, but the order above is common.</p>
 
-<p>To execute LexiconHelper, just create a new resource to display the output and put a snippet tag for it in the Resource content field:</p>
+<p>To execute LexiconHelper, just create a new resource to display the output and put a snippet tag for it in the Resource Content field:</p>
 
 <pre><fixedpre>
     [[!LexiconHelper?
