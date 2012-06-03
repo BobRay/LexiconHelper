@@ -70,6 +70,9 @@
  * Use singe quotes and no spaces
 */
 
+/* ToDo: lexicon strings in resources and chunks */
+/* ToDo: walk through directories and process all possible files */
+
 if (!defined('MODX_CORE_PATH')) {
     $outsideModx = true;
     /* put the path to your core in the next line to run outside of MODx */
@@ -83,9 +86,9 @@ if (!defined('MODX_CORE_PATH')) {
 } else {
     $outsideModx = false;
 }
-
+$codeChanged = false;
 $props =& $scriptProperties;
-
+/* @var $modx modX */
 /* language to use for error messages and reports */
 $snippetLanguage = $modx->getOption('manager_language',$props,null);
 $snippetLanguage = !empty ($snippetLanguage) ? $snippetLanguage . ':' : 'en:';
@@ -96,7 +99,10 @@ $empty = array();
 $matches = array();
 $code = '';
 $output = '';
-
+$languageStrings = '';
+$rewriteCodeFile = isset($props['rewriteCodeFile']) && $props['rewriteCodefile'];
+$rewriteLanguageFile = isset($props['rewriteLanguageFile']) && $props['rewriteLanguageFile'];
+$showCode = isset($props['showCode']) && $props['showCode'];
 
 /* Set log stuff */
 $modx->setLogLevel(modX::LOG_LEVEL_INFO);
@@ -151,9 +157,16 @@ if ($has_properties) {
     preg_match_all("/\s*\'desc\'\s*\=\>\s*\'(.*)\'/", $code, $matches);
     $codeStrings = array_merge($codeStrings, $matches[1]);
 }
+$codeStringValues = array();
 /* see if codestrings are in language file */
 if (!empty($codeStrings)) {
     foreach($codeStrings as $key => $codeString) {
+        if (strstr($codeString,'~~')) {
+            $t = explode('~~', $codeString);
+            $codeString = $t[0];
+            $codeStringValues[$codeString] = $t[1];
+            $code = str_replace('~~' . $t[1], '', $code);
+        }
         if (! isset($_lang[$codeString]) ) {
             $untranslated[] = $codeString;
         }
@@ -182,9 +195,16 @@ if (!empty($codeStrings) && !empty($_lang) && empty($untranslated) && empty($emp
 } else {
     if (!empty($untranslated)) {
         /* report untranslated code strings */
-        $output .= "\n\n\n   *** " . $modx->lexicon('lh.missing_from_language_file')  . " ***\n";
+        $output .= "\n\n\n   *** " . $modx->lexicon('lh.missing_from_language_file') . ": "   . $languageFile .  " ***\n";
+        $output .= "\n/* Lexicon Strings in: " . $code_file . ' */' . "\n";
         foreach ($untranslated as $item) {
-            $output .= "\n" . '$_lang[' . "'" . $item . "'] = '';";
+            $value = isset($codeStringValues[$item])? $codeStringValues[$item]: '';
+
+            if (! empty($value)) {
+                $codeChanged = true;
+                $languageStrings .= "\n" . '$_lang[' . "'" . $item . "'] = '" . $value . "';";
+            }
+            $output .= "\n" . '$_lang[' . "'" . $item . "'] = '" . $value . "';";
         }
     }
     if (!empty($empty)) {
@@ -209,6 +229,23 @@ if (empty ($orphans) && !empty($_lang)) {
     }
 }
 
+if ($codeChanged && $rewriteCodeFile) {
+   $fp = fopen($code_file, 'w');
+    fwrite($fp, $code);
+    fclose($fp);
+}
+
+if ($rewriteLanguageFile && (!empty($languageStrings))) {
+    $fp = fopen($languageFile, 'rw');
+    $content = fread($fp, 2048);
+    $content .= "\n" . $languageStrings;
+    fwrite($fp, $content);
+    fclose($fp);
+}
+
+if ($showCode) {
+    $output .= "\n\n" . $code . "\n\n";
+}
 if ($outsideModx) {
     echo $output;
 } else {

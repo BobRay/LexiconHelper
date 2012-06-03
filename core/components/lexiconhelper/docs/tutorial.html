@@ -16,22 +16,22 @@ Go to System | Package Management on the main menu in the MODx Manager and click
 
 <p>A lexicon key in the code might look like this:</p>
 <pre><fixedpre>
-    <?php
-    if (! file_exists('myfile') {
-        return $modx->lexicon('mc.file_not_found');
-    }
+<?php
+if (! file_exists('myfile') ) {
+    return $modx->lexicon('mc.file_not_found');
+}
 </fixedpre></pre>
 
 <p>The corresponding line in the lexicon file, might look like this:</p>
 <pre><fixedpre>
-    $_lang['mc.file_not_found'] = 'Sorry, unable to find that file';
+$_lang['mc.file_not_found'] = 'Sorry, unable to find that file';
 </fixedpre></pre>
 
 <p>The prefix on the language key (&quot;mc.&quot; in the example above) is optional, but recommended. It helps keep your keys from colliding with others that might be used on the same page. The two-letter code is derived from the name of your component. To be extra safe, you could use the full name of your component as a prefix.</p>
 
-<p>When the call to $modx-&gt;lexicon() is made, MODX will look through the currently loaded lexicon strings for the key you used. If it finds the key, it will replace the $modx-&gt;lexicon() call with the corresponding value. </p>
+<p>When the call to <fixedpre>$modx->lexicon()</fixedpre> is made, MODX will look through the currently loaded lexicon strings for the key you used. If it finds the key, it will replace the <fixedpre>$modx->lexicon()</fixedpre> call with the corresponding value. </p>
 
-<p>In order for any lexicon strings to be loaded, you need to call $modx-&gt;load() before any calls to $modx-&gt;lexicon() are made. Go <a href="http://rtfm.modx.com/display/revolution20/Internationalization">here</a> for more information on loading the lexicon.</p>
+<p>In order for any lexicon strings to be loaded, you need to call <fixedpre>$modx->load()</fixedpre> before any calls to <fixedpre>$modx->lexicon()</fixedpre> are made. Go <a href="http://rtfm.modx.com/display/revolution20/Internationalization">here</a> for more information on loading the lexicon.</p>
 
 <h3>Location of Lexicon Files</h3>
 
@@ -53,12 +53,12 @@ MODX root directory
                         properties.inc.php
 </fixedpre></pre>
 
-<p>If your Transport Package has been created properly, it will set a namespace path for your component. MODX will automatically know where to look to load the default.inc.php file when you call $modx-&gt;lexicon-&gt;load('default') in your snippet. If the namespace has not been set, you can use this form: $modx-&gt;lexicon-&gt;load('mycomponent:default'). If the current manager_language is 'en', MODX will then load the lexicon strings from this file:</p>
+<p>If your Transport Package has been created properly, it will set a namespace path for your component. MODX will automatically know where to look to load the default.inc.php file when you call <fixedpre>$modx->lexicon->load('default')</fixedpre> in your snippet. If the namespace has not been set, you can use this form: <fixedpre>$modx->lexicon->load('mycomponent:default')</fixedpre>. If the current manager_language is 'en', MODX will then load the lexicon strings from this file:</p>
 <pre><fixedpre>
-    core/components/mycomponent/lexicon/en/default.inc.php.
+core/components/mycomponent/lexicon/en/default.inc.php.
 </fixedpre></pre>
 
-<p>If you want to specify the language explicitly, you can use this form: $modx-&gt;lexicon-&gt;load('en:mycomponent:default'). </p>
+<p>If you want to specify the language explicitly, you can use this form: <fixedpre>$modx->lexicon->load('en:mycomponent:default')</fixedpre>. </p>
 
 
 <p>If the 'lexicon' field of each property has been set (e.g., 'mycomponent:properties'), MODX will know where to look when a user clicks on a property description in the Manager.</p>
@@ -67,7 +67,7 @@ MODX root directory
 <p>LexiconHelper assumes that you have already put lexicon strings in your code. The lexicon() calls in the code <b>must</b> be in this form:</p>
 
 <pre><fixedpre>
-    $modx->lexicon('prefix.language_string_key');
+$modx->lexicon('prefix.language_string_key');
 </fixedpre></pre>
 
 <p>The prefix is optional, but you must use single quotes and no spaces.</p>
@@ -75,14 +75,14 @@ MODX root directory
 <p>In an array of properties in a Transport Package build file, each property is represented by an array of fields. This example property has an internationalized property description with language strings in the file properties.inc.php:</p>
 
 <pre><fixedpre>
-    array(
-        'name' => 'MyProperty',
-        'desc' => 'mc.some_lexicon_key',
-        'type' => 'integer',
-        'options' => '',
-        'lexicon' => 'mycomponent:properties',
-        'value' => '12',
-    },
+array(
+    'name' => 'MyProperty',
+    'desc' => 'mc.some_lexicon_key',
+    'type' => 'integer',
+    'options' => '',
+    'lexicon' => 'mycomponent:properties',
+    'value' => '12',
+},
 </fixedpre></pre>
 
 <p>In the example above, the 'desc' field holds the language key and the 'lexicon' field tells MODX where the lexicon file is. When a user clicks on the property description, he or she will see the language string from the appropriate properties.inc.php file based on the current manager_language setting. The array fields can be in any order, but the order above is common.</p>
@@ -90,38 +90,38 @@ MODX root directory
 <p>To execute LexiconHelper, just create a new resource to display the output and put a snippet tag for it in the Resource Content field:</p>
 
 <pre><fixedpre>
-    [[!LexiconHelper?
-        &code_path=`path/to/code/directory`
-        &code_file=`name of code file`
-        &language_path=`path/to/language/directory`
-        &language_file=`name of language file`
-        &language=`en`
-    ]]
+[[!LexiconHelper?
+    &code_path=`path/to/code/directory`
+    &code_file=`name of code file`
+    &language_path=`path/to/language/directory`
+    &language_file=`name of language file`
+    &language=`en`
+]]
 </fixedpre></pre>
 
-<p>The &amp;language property defaults to `en` and the &amp;language_file property defaults to default.inc.php`. These two strings will be translated if used in the path properties:</p>
+<p>The <fixedpre>&language</fixedpre> property defaults to `en` and the <fixedpre>&language_file</fixedpre> property defaults to default.inc.php`. These two strings will be translated if used in the path properties:</p>
 <pre><fixedpre>
-    {core_path}
-    {assets_path}
+{core_path}
+{assets_path}
 </fixedpre></pre>
-<p>The strings above will be replaced with the appropriate paths for your installation. They'll have a trailing slash, so be sure not to add an extra one in your property. Also, do <b>not</b> include the language directory name in the &amp;language_path property. It will be added automatically.</p>
+<p>The strings above will be replaced with the appropriate paths for your installation. They'll have a trailing slash, so be sure not to add an extra one in your property. Also, do <b>not</b> include the language directory name in the <fixedpre>&language_path</fixedpre> property. It will be added automatically.</p>
 
 <p>Here is an example:</p>
 
 <pre><fixedpre>
-    [[!LexiconHelper?
-        &code_path=`{core_path}components/mycomponent/elements/snippets/`
-        &code_file=`mycomponent.snippet.php`
-        &language_path=`{core_path}components/mycomponent/lexicon/`
-        &language_file=`default.inc.php`
-        &language=`en`
-        &has_properties=`0`
-    ]]
+[[!LexiconHelper?
+    &code_path=`{core_path}components/mycomponent/elements/snippets/`
+    &code_file=`mycomponent.snippet.php`
+    &language_path=`{core_path}components/mycomponent/lexicon/`
+    &language_file=`default.inc.php`
+    &language=`en`
+    &has_properties=`0`
+]]
 </fixedpre></pre>
 
-<p>Note that the language file must exist, though it can be empty. You can also list several files (separated by commas &mdash; no spaces) in the &amp;code_file property if several code files share the same language file, but LexiconHelper can only check one language file at a time. If the code files are in different directories (e.g., a snippet and a plugin that share a language file), you can cheat by shortening the &amp;code_path property and adding the end of the path to the beginning of each file in the &amp;code_file property. </p>
+<p>Note that the language file must exist, though it can be empty. You can also list several files (separated by commas &mdash; no spaces) in the <fixedpre>&code_file</fixedpre> property if several code files share the same language file, but LexiconHelper can only check one language file at a time. If the code files are in different directories (e.g., a snippet and a plugin that share a language file), you can cheat by shortening the <fixedpre>&code_path</fixedpre> property and adding the end of the path to the beginning of each file in the <fixedpre>&code_file</fixedpre> property. </p>
 
-<p>If the &amp;has_properties property is set to `1` or if a code_file has the word 'properties' in its name, LexiconHelper will also look for internationalized property descriptions in the code.</p>
+<p>If the <fixedpre>&has_properties</fixedpre> property is set to `1` or if a code_file has the word 'properties' in its name, LexiconHelper will also look for internationalized property descriptions in the code.</p>
 
 <p>When you preview the resource, LexiconHelper will display the information about the language strings used in the code file(s). The parsing is fairly slow, especially if the code file is large, so be patient. If there are missing strings in the language file, LexiconHelper will display them in a format that can be pasted into the language file for completion. </p>
 
@@ -177,4 +177,3 @@ MODX root directory
 <p>&nbsp;</p>
 
 
-        
