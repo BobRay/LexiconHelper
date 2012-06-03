@@ -70,6 +70,8 @@
  * Use singe quotes and no spaces
 */
 
+/* ToDo: Add new lexicon strings, properties, and property descriptions */
+/* ToDo: update version */
 /* ToDo: lexicon strings in resources and chunks */
 /* ToDo: walk through directories and process all possible files */
 
