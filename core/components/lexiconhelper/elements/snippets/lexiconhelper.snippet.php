@@ -1,7 +1,7 @@
 <?php
 /**
  * LexiconHelper
- * Copyright 2011 Bob Ray
+ * Copyright 2012 Bob Ray
  *
  * LexiconHelper is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -28,11 +28,12 @@
  * You must use single quotes and no spaces.
  *
  * Output can be pasted into language file for editing.
+ * ToDo: More info here (~~ option, rewrite files options)
  * /
 
 /*
-  @version Version 1.0.0-beta1
-  Modified: November 30, 2011
+
+  Modified: June, 2012
 
    
   Properties:
@@ -72,6 +73,7 @@
 
 /* ToDo: Add new lexicon strings, properties, and property descriptions */
 /* ToDo: update version */
+/* ToDo: update tutorial */
 /* ToDo: lexicon strings in resources and chunks */
 /* ToDo: walk through directories and process all possible files */
 
