@@ -160,15 +160,18 @@ if ($has_properties) {
     $codeStrings = array_merge($codeStrings, $matches[1]);
 }
 $codeStringValues = array();
+$codeStringKeys = array();
 /* see if codestrings are in language file */
 if (!empty($codeStrings)) {
     foreach($codeStrings as $key => $codeString) {
+
         if (strstr($codeString,'~~')) {
             $t = explode('~~', $codeString);
             $codeString = $t[0];
             $codeStringValues[$codeString] = $t[1];
             $code = str_replace('~~' . $t[1], '', $code);
         }
+        $codeStringKeys[] = $codeString;
         if (! isset($_lang[$codeString]) ) {
             $untranslated[] = $codeString;
         }
@@ -184,7 +187,7 @@ if (!empty($codeStrings)) {
 /* look for unused strings in language file */
 if (isset($_lang)) {
     foreach($_lang as $key => $value) {
-        if (! in_array($key, $codeStrings)) {
+        if (! in_array($key, $codeStringKeys)) {
             $orphans[] = $key;
         }
     }
