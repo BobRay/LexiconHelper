@@ -70,7 +70,7 @@ $sources= array (
 );
 unset($root);
 
-/* Instantiate MODx -- if this require fails, check your
+/* Instantiate MODX -- if this require fails, check your
  * _build/build.config.php file
  */
 require_once $sources['build'].'build.config.php';

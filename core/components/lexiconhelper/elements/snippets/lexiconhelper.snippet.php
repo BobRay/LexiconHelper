@@ -1,7 +1,7 @@
 <?php
 /**
  * LexiconHelper
- * Copyright 2012 Bob Ray
+ * Copyright 2012-2017 Bob Ray
  *
  * LexiconHelper is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -17,7 +17,7 @@
  * Suite 330, Boston, MA 02111-1307 USA
  *
  * @package lexiconhelper
- * @author Bob Ray <http://bobsguides.com>
+ * @author Bob Ray <https://bobsguides.com>
  
  *
  * Description: The LexiconHelper snippet identifies lexicon strings
@@ -68,9 +68,26 @@
  *
  *      $modx->lexicon('language_string_key');
  *
+ * or This form:
+ *
+ *      $modx->lexicon('language_string_key~~Actual Language String');
+ *
  * Use singe quotes and no spaces
+ *
+ * If you have a prefix, be sure to include it as part of the language_string_key.
+ *
+ * With the first version, LexiconHelper will create a lexicon entry with a blank value.
+ * With the second version, LexiconHelper will fill in the value as well.
+ *
+ * You have the option to rewrite the language file to append the new strings.
+ *
+ * You have the option to rewrite the code file to remove everything but the
+ * language_string_key from the lexicon calls.
+ *
+
 */
 
+/* ToDo: make rewrite Code file(s) a separate utility */
 /* ToDo: Add new lexicon strings, properties, and property descriptions */
 /* ToDo: update version */
 /* ToDo: update tutorial */
@@ -79,8 +96,8 @@
 
 if (!defined('MODX_CORE_PATH')) {
     $outsideModx = true;
-    /* put the path to your core in the next line to run outside of MODx */
-    define(MODX_CORE_PATH, 'c:/xampp/htdocs/addons/core/');
+    /* put the path to your core in the next line to run outside of MODX */
+    define('MODX_CORE_PATH', 'c:/xampp/htdocs/addons/core/');
     require_once MODX_CORE_PATH . '/model/modx/modx.class.php';
     $modx = new modX();
     if (!$modx) {
@@ -90,9 +107,24 @@ if (!defined('MODX_CORE_PATH')) {
 } else {
     $outsideModx = false;
 }
+
+
 $codeChanged = false;
 $props =& $scriptProperties;
 /* @var $modx modX */
+/* This  section for running outside of MODX */
+if ($outsideModx) {
+    $core_path = 'c:/xampp/htdocs/addons/assets/mycomponents/notify/';
+    $props['code_path'] = $core_path . 'core/components/notify/elements/chunks/';
+    $props['code_file'] = 'nfnotifyformtpl.chunk.html';
+    $props['language_path'] = $core_path . 'core/components/notify/lexicon/';
+    $props['language_file'] = 'form.inc.php';
+    $props['rewriteCodeFile'] = '1';
+    $props['rewriteLanguageFile'] = '0';
+}
+
+
+
 /* language to use for error messages and reports */
 $snippetLanguage = $modx->getOption('manager_language',$props,null);
 $snippetLanguage = !empty ($snippetLanguage) ? $snippetLanguage . ':' : 'en:';
@@ -101,10 +133,12 @@ $modx->lexicon->load($snippetLanguage . 'lexiconhelper:default');
 $orphans = array();
 $empty = array();
 $matches = array();
+$search = array(); /* array of lexicon descriptions to be (optionally) removed from code file */
+$replace = array(); /* array of empty strings to use for replacement */
 $code = '';
 $output = '';
 $languageStrings = '';
-$rewriteCodeFile = isset($props['rewriteCodeFile']) && $props['rewriteCodefile'];
+$rewriteCodeFile = isset($props['rewriteCodeFile']) && $props['rewriteCodeFile'];
 $rewriteLanguageFile = isset($props['rewriteLanguageFile']) && $props['rewriteLanguageFile'];
 $showCode = isset($props['showCode']) && $props['showCode'];
 
@@ -156,8 +190,15 @@ if (! file_exists($languageFile)) {
 preg_match_all("/lexicon\(\'([^\\']+)\'\)/", $code, $matches);
 $codeStrings = array_values($matches[1]);
 
+$matches = array();
+
+/* look for language string tags */
+preg_match_all("/\[\[%([^?\]]+)/", $code, $matches);
+$codeStrings = array_merge($codeStrings, $matches[1]);
+
 /* look for descriptions in property files */
 if ($has_properties) {
+    $matches = array();
     preg_match_all("/\s*\'desc\'\s*\=\>\s*\'(.*)\'/", $code, $matches);
     $codeStrings = array_merge($codeStrings, $matches[1]);
 }
@@ -168,8 +209,11 @@ if (!empty($codeStrings)) {
     foreach($codeStrings as $key => $codeString) {
 
         if (strstr($codeString,'~~')) {
+
             $t = explode('~~', $codeString);
             $codeString = $t[0];
+            $search[] = '~~' . $t[1];
+            $replace[] = '';
             $codeStringValues[$codeString] = $t[1];
             $code = str_replace('~~' . $t[1], '', $code);
         }
@@ -236,18 +280,36 @@ if (empty ($orphans) && !empty($_lang)) {
     }
 }
 
-if ($codeChanged && $rewriteCodeFile) {
-   $fp = fopen($code_file, 'w');
-    fwrite($fp, $code);
-    fclose($fp);
+if ($rewriteCodeFile) {
+
+    foreach ($codeFiles as $codeFile) {
+        $path = $modx->getOption('code_path', $props, null);
+        $path = str_replace('{core_path}', MODX_CORE_PATH, $path);
+        $path = str_replace('{assets_path}', MODX_ASSETS_PATH, $path);
+        $codeFile = $path . $codeFile;
+
+        $content = file_get_contents($codeFile);
+        $content = str_replace($search, $replace, $content);
+
+        $fp = fopen($codeFile, 'w');
+        if (! $fp) {
+            $output .= "\nCould not open code file: " . $codeFile . "\n";
+        } else {
+            fwrite($fp, $content);
+            fclose($fp);
+        }
+
+        $output .= "\n Lexicon descriptions removed from code file: " . $codeFile . "\n\n";
+    }
 }
 
 if ($rewriteLanguageFile && (!empty($languageStrings))) {
-    $fp = fopen($languageFile, 'rw');
-    $content = fread($fp, 2048);
+    $content = file_get_contents($languageFile);
     $content .= "\n" . $languageStrings;
+    $fp = fopen($languageFile, 'w');
     fwrite($fp, $content);
     fclose($fp);
+    $output .= "\n Lexicon strings appended to language file: " . $languageFile . "\n\n";
 }
 
 if ($showCode) {

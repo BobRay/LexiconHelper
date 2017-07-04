@@ -1,12 +1,18 @@
-LexiconHelper Snippet for MODx Revolution
+LexiconHelper Snippet for MODX Revolution
 ==========================================
 
-**Author:** Bob Ray [Bob's Guides](http://bobsguides.com)
+**Author:** Bob Ray [Bob's Guides](https://bobsguides.com)
 
-Documentation is available at [Bob's Guides](http://bobsguides.com/lexiconhelper-tutorial.html)
+**Documentation:** [LexiconHelper Docs](https://bobsguides.com/lexiconhelper-tutorial.html)
 
 
-This snippet is for use with MODx Revolution. LexiconHelper is a utility to help MODX add-on developers create and check lexicon files for their components. Note that this is *not* a tool for translators.
+**NOTE:** LexiconHelper is now a part of the MyComponent extra. Though you can still use it as a standalone snippet, the version in MyComponent is much more powerful. This version is no longer being developed.
+
+<br>
+
+**Description**
+
+This snippet is for use with MODX Revolution. LexiconHelper is a utility to help MODX add-on developers create and check lexicon files for their components. Note that this is *not* a tool for translators.
 
 Once you have put lexicon strings in your code, LexiconHelper finds them and creates output that can be pasted into a lexicon file, so all you need to do is type in the strings you want to appear.
 
@@ -16,11 +22,4 @@ For more information about using lexicon strings to internationalize your compon
 
 
 
-Installing LexiconHelper for MODx Revolution
----------------------------------------------
-
-Go to System | Package Management on the main menu in the MODx Manager and click on the "Download Extras" button. That will take you to the Revolution Repository (AKA Web Transport Facility). Put LexiconHelper in the search box and press Enter. Click on the "Download" button, and when it changes to "Downloaded," click on the "Finish" button. That should bring you back to your Package Management grid. Right click on LexiconHelper and select "Install Package." The LexiconHelper snippet should now be installed.
-
-Usage
------
-See the tutorial at [Bob's Guides](http://bobsguides.com/lexiconhelper-tutorial.html)
+See the tutorial at [Bob's Guides](https://bobsguides.com/lexiconhelper-tutorial.html)
